@@ -1,0 +1,33 @@
+#include<stdio.h>
+#include<stdlib.h>
+#define n 3
+int main(){
+    //rtos
+    int C[3] = {3,2,2};
+    int T[3] = {20,5,10};
+    float U;
+    printf("Tasks:\n");
+    printf("T1->C=3,T=20\n");
+    printf("T2->C=2,T=5\n");
+    printf("T3->C=2,T=10\n");
+    U=(float)3/20+(float)2/5+(float)2/10;
+    printf("\nCPU Util%2f\n",U);
+    printf("rms bound =0.78");
+    if(U<=0.78){
+        printf("Tasks are SchedulablE \n")
+    ;
+}
+else{
+    printf ("TASKS ARE NOT SCHEDULABLE\n");
+
+}
+    printf("\nPriority(smaller period->higher priority");
+    printf("T2<T3<T1\n");
+    printf("timeline\n");
+    printf("0-2 :t2 ");
+    printf("2-4:t3 ");
+    printf("4-7:t1");
+    printf("7-10:t2");
+    printf("10-12: t2 ");
+    printf("12-14:t3 ");
+    printf("15-17:t2 ");
