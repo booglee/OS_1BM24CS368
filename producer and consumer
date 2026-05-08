@@ -1,0 +1,67 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<stdbool.h>
+#include<pthread.h>
+#include<semaphore.h>
+
+#define BUFFER_SIZE 5 // Removed semicolon
+
+int buffer[BUFFER_SIZE];
+int in=0;
+int out=0 ;
+
+sem_t empty;
+sem_t full;
+pthread_mutex_t mutex;
+
+void* producer(void *arg){ // Changed return type to void*
+    bool flag=true;
+    int item=-1;
+    while(flag){
+        item=rand()%100; 
+
+        sem_wait(&empty); // Changed from full to empty
+        pthread_mutex_lock(&mutex);
+        
+        buffer[in]=item;
+        printf("Produced: %d\n", item);
+        in=(in+1)%BUFFER_SIZE;
+        
+        pthread_mutex_unlock(&mutex);
+        sem_post(&full); // Signal that buffer has an item
+    }
+    return NULL;
+}
+
+void* consumer(void *arg){ // Changed return type to void*
+    int item=-1;
+    while(true){
+        sem_wait(&full); 
+        pthread_mutex_lock(&mutex);    
+        
+        item=buffer[out]; // Assigned to local variable 'item'
+        printf("Consumed: %d\n", item);
+        out=(out+1)%BUFFER_SIZE;
+        
+        pthread_mutex_unlock(&mutex);
+        sem_post(&empty); // Signal that a slot is now free
+    }
+    return NULL;
+}
+
+int main(){
+    pthread_t producer_thread, consumer_thread;
+    
+    sem_init(&empty,0,BUFFER_SIZE);
+    sem_init(&full,0,0);
+    pthread_mutex_init(&mutex,NULL);
+    
+    pthread_create(&producer_thread,NULL,producer,NULL);
+    pthread_create(&consumer_thread,NULL,consumer,NULL);
+
+    pthread_join(producer_thread,NULL);
+    pthread_join(consumer_thread,NULL); // Fixed syntax error here
+
+    printf("producer and consumer problem\n");
+    return 0;
+}
